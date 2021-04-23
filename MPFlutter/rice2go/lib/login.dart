@@ -70,7 +70,6 @@ class _LoginState extends State<Login> {
                             width: 350,
                             child: TextFormField(
                                 controller: passController,
-                                keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                     labelText: 'Password',
                                     icon: Icon(Icons.lock_rounded)),
@@ -383,7 +382,7 @@ class _LoginState extends State<Login> {
                       controller: fornewpassController,
                       decoration: InputDecoration(
                           labelText: 'New Password',
-                          hintText: "Create a strong password",
+                          hintText: "At least 6-15 characters",
                           icon: Icon(
                             Icons.lock_rounded,
                           ),
