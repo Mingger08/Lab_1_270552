@@ -143,9 +143,9 @@ class _LoginState extends State<Login> {
 
   void _onLogin() {
     if (_formKey.currentState.validate()) {
-      // print("Validated!");
+      print("Validated!");
     } else {
-      // print("Not Validated");
+      print("Not Validated");
     }
     String _email = emailController.text.toString();
     String _pass = passController.text.toString();
@@ -273,7 +273,6 @@ class _LoginState extends State<Login> {
             child: Text("SEND VERIFICATION CODE"),
             onPressed: () {
               _getVerifyCode(foremailController.text);
-              Navigator.of(context).pop();
             }),
       ],
     );
@@ -321,10 +320,7 @@ class _LoginState extends State<Login> {
         TextButton(
             child: Text("CONTINUE"),
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (ctxDialog) =>
-                      SingleChildScrollView(child: ResetDialog()));
+              _codeValidate(foremailController.text, forcodeController.text);
             }),
       ],
     );
@@ -402,17 +398,10 @@ class _LoginState extends State<Login> {
           )),
       actions: [
         TextButton(
-            child: Text("BACK"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        TextButton(
             child: Text("SUBMIT"),
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (content) => Login()));
               _resetPassword(foremailController.text, fornewpassController.text,
-                  forconpassController.text, forcodeController.text);
+                  forconpassController.text);
             }),
       ],
     );
@@ -436,12 +425,11 @@ class _LoginState extends State<Login> {
             textColor: Colors.white,
             fontSize: 16.0);
         FocusScope.of(context).unfocus();
+        Navigator.of(context).pop();
         showDialog(
             context: context,
             builder: (ctxDialog) => SingleChildScrollView(child: CodeDialog()));
       } else {
-        Navigator.of(context).pop();
-        foremailController.clear();
         Fluttertoast.showToast(
             msg: "Sorry, please try again later",
             toastLength: Toast.LENGTH_SHORT,
@@ -450,22 +438,25 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
+
+        foremailController.clear();
       }
     });
   }
 
-  void _resetPassword(
-      String foremail, String fornewpass, String forconpass, String forcode) {
+  void _resetPassword(String foremail, String fornewpass, String forconpass) {
     http.post(
         Uri.parse("https://hubbuddies.com/270552/rice2go/php/resetpass.php"),
         body: {
           "foremail": foremail,
           "fornewpass": fornewpass,
           "forconpass": forconpass,
-          "forverifycode": forcode,
+          // "forverifycode": forcode,
         }).then((response) {
       print(response.body);
       if (response.body == "success") {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (content) => Login()));
         Fluttertoast.showToast(
             msg: "Password successfully changed.",
             toastLength: Toast.LENGTH_SHORT,
@@ -483,24 +474,63 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
-      } else if (response.body == "failed2") {
+        fornewpassController.clear();
+        forconpassController.clear();
+      } // else if (response.body == "failed2") {
+      // Fluttertoast.showToast(
+      // msg: "Sorry, verify code not correct.",
+      // toastLength: Toast.LENGTH_SHORT,
+      // gravity: ToastGravity.BOTTOM,
+      // timeInSecForIosWeb: 1,
+      // backgroundColor: Colors.brown,
+      // textColor: Colors.white,
+      // fontSize: 16.0);
+      // }
+      else {
         Fluttertoast.showToast(
-            msg: "Sorry, verify code not correct.",
+            msg: "Sorry, fail to change password",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
+      }
+    });
+  }
+
+  void _codeValidate(String foremail, String forcode) {
+    http.post(
+        Uri.parse("https://hubbuddies.com/270552/rice2go/php/verifycode.php"),
+        body: {
+          "foremail": foremail,
+          "forverifycode": forcode,
+        }).then((response) {
+      print(response.body);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Success. ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.brown,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (ctxDialog) =>
+                SingleChildScrollView(child: ResetDialog()));
       } else {
         Fluttertoast.showToast(
-            msg: "Sorry. fail to change pass",
+            msg: "Invalid verification code. ",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
+        forcodeController.clear();
       }
     });
   }

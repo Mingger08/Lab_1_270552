@@ -289,7 +289,7 @@ class _RegisterState extends State<Register> {
             });
       } else {
         Fluttertoast.showToast(
-            msg: "Please agree",
+            msg: "Please agree to the terms.",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
