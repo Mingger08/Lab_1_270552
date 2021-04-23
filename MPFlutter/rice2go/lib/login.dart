@@ -168,7 +168,18 @@ class _LoginState extends State<Login> {
           "password": pass,
         }).then((response) {
       print(response.body);
-      if (response.body == "success") {
+      if (response.body == "failed") {
+        Fluttertoast.showToast(
+            msg: "Invalid email/password. ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.brown,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        emailController.clear();
+        passController.clear();
+      } else {
         Fluttertoast.showToast(
             msg: "Success. ",
             toastLength: Toast.LENGTH_SHORT,
@@ -179,20 +190,8 @@ class _LoginState extends State<Login> {
             fontSize: 16.0);
         Navigator.push(
             context, MaterialPageRoute(builder: (content) => MainScreen()));
-      } else {
-        Fluttertoast.showToast(
-            msg: "Invalid email/password. ",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.brown,
-            textColor: Colors.white,
-            fontSize: 16.0);
-          emailController.clear();
-          passController.clear();
-        }
       }
-    );
+    });
   }
 
   void _registerNewUser() {
@@ -521,7 +520,7 @@ class _LoginState extends State<Login> {
 
   void _codeValidate(String foremail, String forcode) {
     http.post(
-        Uri.parse("https://hubbuddies.com/270552/rice2go/php/verifycode.php"),
+        Uri.parse("https://hubbuddies.com/270552/rice2go/php/verify_code.php"),
         body: {
           "foremail": foremail,
           "forverifycode": forcode,
