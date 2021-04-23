@@ -309,7 +309,6 @@ class _RegisterState extends State<Register> {
           backgroundColor: Colors.brown,
           textColor: Colors.white,
           fontSize: 16.0);
-          
       return;
     }
   }
