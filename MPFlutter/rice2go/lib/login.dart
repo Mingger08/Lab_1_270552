@@ -101,8 +101,11 @@ class _LoginState extends State<Login> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            onPressed: _onLogin,
-                            color: Colors.brown[400]),
+                            color: Colors.brown[400],
+                            onPressed: () {
+                              _onLogin(
+                                  emailController.text, passController.text);
+                            }),
                       ),
                       SizedBox(height: 20),
                       GestureDetector(
@@ -141,18 +144,16 @@ class _LoginState extends State<Login> {
             )));
   }
 
-  void _onLogin() {
+  void _onLogin(String email, String pass) {
     if (_formKey.currentState.validate()) {
       print("Validated!");
     } else {
       print("Not Validated");
     }
-    String _email = emailController.text.toString();
-    String _pass = passController.text.toString();
 
-    if (_email.isEmpty || _pass.isEmpty) {
+    if (email.isEmpty || pass.isEmpty) {
       Fluttertoast.showToast(
-          msg: "Login Failed! Email/password is missing.",
+          msg: "Email/password is missing.",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -161,8 +162,37 @@ class _LoginState extends State<Login> {
           fontSize: 16.0);
       return;
     }
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => MainScreen()));
+    http.post(Uri.parse("https://hubbuddies.com/270552/rice2go/php/login.php"),
+        body: {
+          "email": email,
+          "password": pass,
+        }).then((response) {
+      print(response.body);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Success. ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.brown,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (content) => MainScreen()));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Invalid email/password. ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.brown,
+            textColor: Colors.white,
+            fontSize: 16.0);
+          emailController.clear();
+          passController.clear();
+        }
+      }
+    );
   }
 
   void _registerNewUser() {
@@ -476,17 +506,7 @@ class _LoginState extends State<Login> {
             fontSize: 16.0);
         fornewpassController.clear();
         forconpassController.clear();
-      } // else if (response.body == "failed2") {
-      // Fluttertoast.showToast(
-      // msg: "Sorry, verify code not correct.",
-      // toastLength: Toast.LENGTH_SHORT,
-      // gravity: ToastGravity.BOTTOM,
-      // timeInSecForIosWeb: 1,
-      // backgroundColor: Colors.brown,
-      // textColor: Colors.white,
-      // fontSize: 16.0);
-      // }
-      else {
+      } else {
         Fluttertoast.showToast(
             msg: "Sorry, fail to change password",
             toastLength: Toast.LENGTH_SHORT,
