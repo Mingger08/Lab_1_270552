@@ -14,7 +14,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  bool _passwordVisible = false;
 
   TextEditingController emailController = new TextEditingController();
   TextEditingController passController = new TextEditingController();
@@ -360,7 +359,7 @@ class _LoginState extends State<Login> {
       title: Text("Reset Password"),
       content: new Container(
           width: 400,
-          height: 210,
+          height: 190,
           child: Column(
             children: [
               Row(children: [
@@ -376,52 +375,34 @@ class _LoginState extends State<Login> {
               SizedBox(height: 15),
               Row(children: [
                 Container(
-                  width: 250,
-                  child: TextField(
-                      obscureText: !_passwordVisible,
+                    width: 240,
+                    child: TextField(
+                      obscureText: true,
                       controller: fornewpassController,
                       decoration: InputDecoration(
-                          labelText: 'New Password',
-                          hintText: "At least 6-15 characters",
-                          icon: Icon(
-                            Icons.lock_rounded,
-                          ),
-                          suffixIcon: IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                color: _passwordVisible
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              ),
-                              onPressed: () {
-                                setState(() => this._passwordVisible =
-                                    !this._passwordVisible);
-                              }))),
-                ),
+                        labelText: 'New Password',
+                        hintText: "At least 6-15 characters",
+                        icon: Icon(
+                          Icons.lock_rounded,
+                        ),
+                      ),
+                    )),
               ]),
-              SizedBox(height: 15),
+              SizedBox(height: 10),
               Row(children: [
                 Container(
                     width: 250,
                     child: TextField(
-                      obscureText: !this._passwordVisible,
+                      obscureText: true,
                       controller: forconpassController,
                       decoration: InputDecoration(
                           labelText: 'Re-type Password',
                           icon: Icon(Icons.lock_rounded),
-                          suffixIcon: IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                color: this._passwordVisible
-                                    ? Colors.blue
-                                    : Colors.grey,
+                          
                               ),
-                              onPressed: () {
-                                setState(() => this._passwordVisible =
-                                    !this._passwordVisible);
-                              })),
                     )),
               ]),
+             
             ],
           )),
       actions: [
@@ -495,7 +476,18 @@ class _LoginState extends State<Login> {
             fontSize: 16.0);
       } else if (response.body == "failed1") {
         Fluttertoast.showToast(
-            msg: "Sorry, confirm password not same.",
+            msg: "Password not matched.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.brown,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        fornewpassController.clear();
+        forconpassController.clear();
+      } else if (response.body == "failed2") {
+        Fluttertoast.showToast(
+            msg: "Password must be at least 6-15 characters.",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -552,4 +544,5 @@ class _LoginState extends State<Login> {
       }
     });
   }
+
 }
