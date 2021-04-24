@@ -407,6 +407,12 @@ class _LoginState extends State<Login> {
           )),
       actions: [
         TextButton(
+            child: Text("CANCEL"),
+            onPressed: () {
+               Navigator.push(
+            context, MaterialPageRoute(builder: (content) => Login()));
+            }),
+        TextButton(
             child: Text("SUBMIT"),
             onPressed: () {
               _resetPassword(foremailController.text, fornewpassController.text,
@@ -460,7 +466,7 @@ class _LoginState extends State<Login> {
           "foremail": foremail,
           "fornewpass": fornewpass,
           "forconpass": forconpass,
-          // "forverifycode": forcode,
+          
         }).then((response) {
       print(response.body);
       if (response.body == "success") {
