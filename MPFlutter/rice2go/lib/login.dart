@@ -505,6 +505,8 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
+            Navigator.push(
+            context, MaterialPageRoute(builder: (content) => Login()));
       }
     });
   }
