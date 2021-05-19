@@ -95,7 +95,7 @@ class _MyPageState extends State<MyPage> {
                                                           child: Row(children: [
                                                         Container(
                                                             child: Text(
-                                                                'Product Name: ')),
+                                                                'Product Name :')),
                                                         Expanded(
                                                             child: Text(
                                                           _productList[index]
@@ -113,7 +113,7 @@ class _MyPageState extends State<MyPage> {
                                                           child: Row(children: [
                                                         Container(
                                                             child: Text(
-                                                                'Product Type:')),
+                                                                'Product Type   :')),
                                                         Expanded(
                                                             child: Text(
                                                           _productList[index]
@@ -131,7 +131,7 @@ class _MyPageState extends State<MyPage> {
                                                           child: Row(children: [
                                                         Container(
                                                             child: Text(
-                                                                'Product Price(RM):')),
+                                                                'Price (RM)        :')),
                                                         Expanded(
                                                             child: Text(
                                                           _productList[index]
@@ -149,7 +149,7 @@ class _MyPageState extends State<MyPage> {
                                                           child: Row(children: [
                                                         Container(
                                                             child: Text(
-                                                                'Product Quantity: ')),
+                                                                'Quantity            : ')),
                                                         Expanded(
                                                             child: Text(
                                                           _productList[index]
