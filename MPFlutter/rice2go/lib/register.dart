@@ -16,9 +16,10 @@ class _RegisterState extends State<Register> {
   TextEditingController passController = new TextEditingController();
   TextEditingController confirmPassController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _agreeTerms = false;
+
   bool _passwordVisible = false;
   bool _regdisable = false;
+  bool checkboxValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -183,33 +184,72 @@ class _RegisterState extends State<Register> {
                                           })),
                                 ]),
                                 SizedBox(height: 10),
-                                Row(children: [
-                                  Checkbox(
-                                      value: _agreeTerms,
-                                      onChanged: (bool value) {
-                                        _onChanged(value);
-                                      }),
-                                  RichText(
-                                    text: TextSpan(
-                                      text: "I agree to the ",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.black),
-                                      children: [
-                                        TextSpan(
-                                          text: "Terms and Conditions",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
+                                FormField(
+                                  builder: (state) {
+                                    return Column(
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Checkbox(
+                                                value: checkboxValue,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    checkboxValue = value;
+                                                    state.didChange(value);
+                                                  });
+                                                }),
+                                            RichText(
+                                              text: TextSpan(
+                                                text: "I agree to the ",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.black),
+                                                children: [
+                                                  TextSpan(
+                                                    text:
+                                                        "Terms and Conditions",
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.black,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Container(
+                                              width: 300,
+                                              height: 25,
+                                              child: Text(
+                                                state.errorText ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.redAccent,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
                                       ],
-                                    ),
-                                  ),
-                                ]),
-                                SizedBox(height: 5),
+                                    );
+                                  },
+                                  validator: (value) {
+                                    if (!checkboxValue) {
+                                      return "*Please accept to the terms & condition before proceed.";
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
                                 Container(
                                   width: 150,
                                   height: 45,
@@ -287,16 +327,6 @@ class _RegisterState extends State<Register> {
                 ],
               );
             });
-      } else {
-        Fluttertoast.showToast(
-            msg: "Please agree to the terms.",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.brown,
-            textColor: Colors.white,
-            fontSize: 16.0);
-        return;
       }
     } else {
       print("Not Validated");
@@ -345,17 +375,6 @@ class _RegisterState extends State<Register> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
-      }
-    });
-  }
-
-  void _onChanged(bool value) {
-    setState(() {
-      _agreeTerms = value;
-      if (_agreeTerms == true) {
-        _regdisable = true;
-      } else {
-        _regdisable = false;
       }
     });
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rice2go/mainscreen.dart';
 import 'package:rice2go/register.dart';
+import 'package:rice2go/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
@@ -186,8 +187,16 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (content) => MainScreen()));
+        List userdata = response.body.split(",");
+        User user = User(
+          email: email,
+          pass: pass,
+          username: userdata[1],
+          phone: userdata[2],
+        );
+
+        Navigator.push(context,
+            MaterialPageRoute(builder: (content) => MainScreen(user: user)));
       }
     });
   }
@@ -237,7 +246,7 @@ class _LoginState extends State<Login> {
     } else {
       await prefs.setString("email", '');
       await prefs.setString("password", '');
-      await prefs.setBool("rememberme", false);
+      await prefs.setBool("rememberme", value);
 
       Fluttertoast.showToast(
           msg: "Preferences removed",
@@ -247,7 +256,23 @@ class _LoginState extends State<Login> {
           backgroundColor: Colors.brown,
           textColor: Colors.white,
           fontSize: 16.0);
+      setState(() {
+        _rememberMe = false;
+      });
+      return;
     }
+  }
+
+  Future<void> loadPref() async {
+    prefs = await SharedPreferences.getInstance();
+    String _email = prefs.getString("email") ?? '';
+    String _password = prefs.getString("password") ?? '';
+    _rememberMe = prefs.getBool("rememberme") ?? false;
+
+    setState(() {
+      emailController.text = _email;
+      passController.text = _password;
+    });
   }
 
   void _forgotPassword() {
@@ -396,21 +421,19 @@ class _LoginState extends State<Login> {
                       obscureText: true,
                       controller: forconpassController,
                       decoration: InputDecoration(
-                          labelText: 'Re-type Password',
-                          icon: Icon(Icons.lock_rounded),
-                          
-                              ),
+                        labelText: 'Re-type Password',
+                        icon: Icon(Icons.lock_rounded),
+                      ),
                     )),
               ]),
-             
             ],
           )),
       actions: [
         TextButton(
             child: Text("CANCEL"),
             onPressed: () {
-               Navigator.push(
-            context, MaterialPageRoute(builder: (content) => Login()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (content) => Login()));
             }),
         TextButton(
             child: Text("SUBMIT"),
@@ -466,7 +489,6 @@ class _LoginState extends State<Login> {
           "foremail": foremail,
           "fornewpass": fornewpass,
           "forconpass": forconpass,
-          
         }).then((response) {
       print(response.body);
       if (response.body == "success") {
@@ -511,7 +533,7 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.brown,
             textColor: Colors.white,
             fontSize: 16.0);
-            Navigator.push(
+        Navigator.push(
             context, MaterialPageRoute(builder: (content) => Login()));
       }
     });
@@ -552,5 +574,4 @@ class _LoginState extends State<Login> {
       }
     });
   }
-
 }

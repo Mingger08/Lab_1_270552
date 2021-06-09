@@ -45,6 +45,7 @@ class _MyPageState extends State<MyPage> {
           child: Container(
               child: Column(
             children: [
+              
               _productList == null
                   ? Flexible(
                       child: Center(
@@ -58,13 +59,14 @@ class _MyPageState extends State<MyPage> {
                               children:
                                   List.generate(_productList.length, (index) {
                                 return Padding(
-                                    padding: EdgeInsets.all(5),
+                                    padding: EdgeInsets.all(0.5),
                                     child: Card(
                                       color: Colors.blue[50],
                                       child: SingleChildScrollView(
                                         child: Column(children: [
-                                          SizedBox(height: 10),
+                                          SizedBox(height: 5),
                                           Container(
+                                            width: screenHeight / 4,
                                             height: screenWidth / 2.5,
                                             child: CachedNetworkImage(
                                               imageUrl:
