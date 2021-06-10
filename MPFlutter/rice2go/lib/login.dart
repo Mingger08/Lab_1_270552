@@ -23,6 +23,13 @@ class _LoginState extends State<Login> {
   TextEditingController forconpassController = new TextEditingController();
   TextEditingController forcodeController = new TextEditingController();
   SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    loadPref();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

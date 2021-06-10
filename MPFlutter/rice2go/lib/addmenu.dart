@@ -285,8 +285,13 @@ class _AddMenuState extends State<AddMenu> {
         TextButton(
             child: Text("YES"),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (content) => MainScreen()));
+              Navigator.pop(
+                context,
+              );
+              Navigator.pop(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => MainScreen(user: widget.user)));
             }),
       ],
     );

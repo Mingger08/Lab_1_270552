@@ -43,7 +43,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             },
           ),
           ListTile(
-              title: Text("Manage Product",
+              title: Text("Manage Food",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               leading: Icon(Icons.admin_panel_settings, color: Colors.brown),
               onTap: () {
