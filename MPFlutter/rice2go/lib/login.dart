@@ -198,8 +198,17 @@ class _LoginState extends State<Login> {
         User user = User(
           email: email,
           pass: pass,
-          username: userdata[1],
-          phone: userdata[2],
+          name: userdata[1],
+          username: userdata[2],
+          phone: userdata[3],
+          gender: userdata[4],
+          birthdate: userdata[5],
+          addressname: userdata[6],
+          subLocality: userdata[7],
+          locality: userdata[8],
+          postalCode: userdata[9],
+          administrativeArea: userdata[10],
+          country: userdata[11],
         );
 
         Navigator.push(context,

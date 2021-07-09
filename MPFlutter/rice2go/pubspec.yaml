@@ -30,6 +30,14 @@ dependencies:
   cached_network_image: ^3.0.0
   image_picker: ^0.7.5+2
   progress_indicators: ^1.0.0
+  flutter_swipe_action_cell: ^2.1.0
+  geocoding: ^2.0.0
+  geolocator: ^7.0.3
+  google_maps_flutter: ^2.0.6
+  webview_flutter: ^2.0.8
+  random_string: ^1.1.0
+  image_cropper: ^1.4.1
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

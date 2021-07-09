@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:rice2go/addmenu.dart';
+import 'package:rice2go/changepassword.dart';
+import 'package:rice2go/choosebill.dart';
 import 'package:rice2go/login.dart';
-
 import 'package:rice2go/mainscreen.dart';
+import 'package:rice2go/managemenu.dart';
+import 'package:rice2go/ordersummary.dart';
 import 'package:rice2go/user.dart';
+import 'package:rice2go/userprofile.dart';
 
 class HomeDrawer extends StatefulWidget {
   final User user;
@@ -22,12 +25,23 @@ class _HomeDrawerState extends State<HomeDrawer> {
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(color: Colors.brown[700]),
-            accountEmail: (Text(widget.user.email)),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              backgroundImage: AssetImage("assets/images/user.png"),
-            ),
-            accountName: Text(widget.user.username),
+            accountEmail:
+                (Text(widget.user.email, style: TextStyle(fontSize: 14))),
+            currentAccountPicture: InkWell(
+                child: CircleAvatar(
+                  backgroundColor: Colors.brown[300],
+                  backgroundImage: NetworkImage(
+                      "https://hubbuddies.com/270552/rice2go/images/profile/${widget.user.email}.png"),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (content) =>
+                              UserProfile(user: widget.user)));
+                }),
+            accountName:
+                Text(widget.user.username, style: TextStyle(fontSize: 14)),
           ),
           ListTile(
             title: Text("Home",
@@ -43,14 +57,54 @@ class _HomeDrawerState extends State<HomeDrawer> {
             },
           ),
           ListTile(
-              title: Text("Manage Food",
+              title: Text("Manage Menu",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              leading: Icon(Icons.admin_panel_settings, color: Colors.brown),
+              leading: Icon(Icons.restaurant_menu_rounded, color: Colors.brown),
               onTap: () {
                 Navigator.pop(context);
 
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (content) => AddMenu()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => ManageMenu(user: widget.user)));
+              }),
+          ListTile(
+              title: Text("Order Summary",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              leading: Icon(Icons.list_rounded, color: Colors.brown),
+              onTap: () {
+                Navigator.pop(context);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => OrderSummary(user: widget.user)));
+              }),
+          ListTile(
+              title: Text("Pay Bill",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              leading: Icon(Icons.receipt_long_outlined, color: Colors.brown),
+              onTap: () {
+                Navigator.pop(context);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) =>
+                            ChooseBillPage(user: widget.user)));
+              }),
+          ListTile(
+              title: Text("Change Password",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              leading: Icon(Icons.security_outlined, color: Colors.brown),
+              onTap: () {
+                Navigator.pop(context);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) =>
+                            ChangePassword(user: widget.user)));
               }),
           SizedBox(height: 25),
           Container(

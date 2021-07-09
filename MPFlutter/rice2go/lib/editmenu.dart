@@ -1,29 +1,50 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:rice2go/food.dart';
+import 'package:rice2go/managemenu.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 
-import 'package:rice2go/mainscreen.dart';
-import 'package:rice2go/user.dart';
+class EditMenu extends StatefulWidget {
+  final Food food;
 
-class AddMenu extends StatefulWidget {
-  final User user;
+  const EditMenu({
+    Key key,
+    this.food,
+  }) : super(key: key);
 
-  const AddMenu({Key key, this.user}) : super(key: key);
   @override
-  _AddMenuState createState() => _AddMenuState();
+  _EditMenuState createState() => _EditMenuState();
 }
 
-class _AddMenuState extends State<AddMenu> {
+class _EditMenuState extends State<EditMenu> {
   int _value;
   PickedFile _image;
   final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController foodnameController = new TextEditingController();
+  bool _takepicture = true;
+  bool _takepicturelocal = false;
+
+  TextEditingController nameController = new TextEditingController();
   TextEditingController descController = new TextEditingController();
   TextEditingController priceController = new TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.food.name;
+    descController.text = widget.food.description;
+    priceController.text = widget.food.price;
+
+    if (widget.food.category == 'Food') {
+      _value = 0;
+    } else if (widget.food.category == 'Beverages') {
+      _value = 1;
+    } else if (widget.food.category == 'Weekly Special Menu') {
+      _value = 2;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +55,9 @@ class _AddMenuState extends State<AddMenu> {
         appBar: AppBar(
             elevation: 0.0,
             backgroundColor: Colors.yellow[50],
-            title: Text('Add Menu', style: TextStyle(color: Colors.black)),
+            title: Text('Edit Menu', style: TextStyle(color: Colors.brown)),
             leading: IconButton(
-              icon: Icon(Icons.close_rounded, color: Colors.black),
+              icon: Icon(Icons.close_rounded, color: Colors.brown),
               onPressed: () {
                 showDialog(
                     context: context,
@@ -46,16 +67,16 @@ class _AddMenuState extends State<AddMenu> {
             ),
             actions: [
               IconButton(
-                icon: Icon(Icons.check, color: Colors.black),
+                icon: Icon(Icons.check, color: Colors.brown),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     print("Validated!");
+
                     showDialog(
                         context: context,
                         builder: (ctxDialog) =>
-                            SingleChildScrollView(child: confirmAddDialog()));
+                            SingleChildScrollView(child: confirmEditDialog()));
                   }
-                  
                 },
               ),
             ]),
@@ -73,28 +94,83 @@ class _AddMenuState extends State<AddMenu> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Stack(children: [
-                              CircleAvatar(
-                                  radius: 90.0,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: _image == null
-                                      ? AssetImage("assets/images/addmenu.png")
-                                      : FileImage(File(_image.path))),
-                              Positioned(
-                                  bottom: 65.0,
-                                  right: 65.0,
-                                  child: InkWell(
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: ((builder) => choosePhoto()),
-                                      );
-                                    },
-                                    child: Icon(
-                                      Icons.add_a_photo_sharp,
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  ))
+                              GestureDetector(
+                                  child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: _takepicture,
+                                    child: Stack(children: [
+                                      Container(
+                                        height: 250,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.transparent),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0)),
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(
+                                                  "https://hubbuddies.com/270552/rice2go/images/menu/${widget.food.id}.png"),
+                                            )),
+                                      ),
+                                      Positioned(
+                                          bottom: 15.0,
+                                          right: 20.0,
+                                          child: InkWell(
+                                            onTap: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: ((builder) =>
+                                                    choosePhoto()),
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.add_a_photo_sharp,
+                                              color: Colors.white,
+                                              size: 29.0,
+                                            ),
+                                          ))
+                                    ]),
+                                  ),
+                                  Visibility(
+                                    visible: _takepicturelocal,
+                                    child: Stack(children: [
+                                      Container(
+                                          height: 250,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.transparent),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0)),
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: _image == null
+                                                    ? AssetImage(
+                                                        "assets/images/addphoto.png")
+                                                    : FileImage(
+                                                        File(_image.path))),
+                                          )),
+                                      Positioned(
+                                          bottom: 15.0,
+                                          right: 20.0,
+                                          child: InkWell(
+                                            onTap: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: ((builder) =>
+                                                    choosePhoto()),
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.add_a_photo_sharp,
+                                              color: Colors.white,
+                                              size: 29.0,
+                                            ),
+                                          ))
+                                    ]),
+                                  ),
+                                ],
+                              )),
                             ]),
                             SizedBox(height: 10),
                             Row(
@@ -102,7 +178,7 @@ class _AddMenuState extends State<AddMenu> {
                                 Container(
                                     width: 350,
                                     child: TextFormField(
-                                        controller: foodnameController,
+                                        controller: nameController,
                                         decoration: InputDecoration(
                                           labelText: 'Name',
                                           icon: Icon(Icons.add_box_outlined,
@@ -244,13 +320,6 @@ class _AddMenuState extends State<AddMenu> {
                                   ],
                                 );
                               },
-                              validator: (value) {
-                                if (value == null) {
-                                  return "*Please select a category.";
-                                } else {
-                                  return null;
-                                }
-                              },
                             ),
                             SizedBox(height: 30),
                           ])))),
@@ -259,19 +328,19 @@ class _AddMenuState extends State<AddMenu> {
     );
   }
 
-  confirmAddDialog() {
+  confirmEditDialog() {
     return AlertDialog(
-      title: Text("Add New Menu?"),
+      title: Text("Edit Menu?"),
       content: new Container(
           width: 400,
-          height: 50,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(children: [
                 Container(
                   width: 250,
                   child: Text(
-                    "Are you sure to add this menu?",
+                    "Are you sure to edit this menu?",
                     style: TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
                   ),
@@ -282,17 +351,21 @@ class _AddMenuState extends State<AddMenu> {
           )),
       actions: [
         TextButton(
-            child: Text("CANCEL"),
+            child: Text("NO"),
             onPressed: () {
               Navigator.pop(
                 context,
               );
             }),
         TextButton(
-            child: Text("SUBMIT"),
+            child: Text("YES"),
             onPressed: () {
-              _addNewMenu();
-              Navigator.of(context).pop();
+              Navigator.pop(
+                context,
+              );
+              _editMenu();
+              Navigator.pop(context,
+                  MaterialPageRoute(builder: (content) => ManageMenu()));
             }),
       ],
     );
@@ -333,19 +406,15 @@ class _AddMenuState extends State<AddMenu> {
               Navigator.pop(
                 context,
               );
-              Navigator.pop(
-                  context,
-                  MaterialPageRoute(
-                      builder: (content) => MainScreen(user: widget.user)));
+              Navigator.pop(context,
+                  MaterialPageRoute(builder: (content) => ManageMenu()));
             }),
       ],
     );
   }
 
-  void _addNewMenu() {
-    final file = File(_image.path);
-    String base64Image = base64Encode(file.readAsBytesSync());
-    String name = foodnameController.text.toString();
+  void _editMenu() {
+    String name = nameController.text.toString();
     String desc = descController.text.toString();
     String category = _value.toString();
     String price = priceController.text.toString();
@@ -357,46 +426,76 @@ class _AddMenuState extends State<AddMenu> {
     } else if (_value == 2) {
       category = 'Weekly Special Menu';
     }
-
-    http.post(
-        Uri.parse("https://hubbuddies.com/270552/rice2go/php/add_new_menu.php"),
-        body: {
-          "name": name,
-          "desc": desc,
-          "category": category,
-          "price": price,
-          "encoded_string": base64Image,
-        }).then((response) {
-      print(response.body);
-      if (response.body == "success") {
-        Fluttertoast.showToast(
-            msg: "New menu is successfully created.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.brown,
-            textColor: Colors.white,
-            fontSize: 16.0);
-
-        setState(() {
-          _image = null;
-          foodnameController.text = "";
-          descController.text = "";
-          _value = null;
-          priceController.text = "";
-        });
-      } else {
-        Fluttertoast.showToast(
-            msg: "Sorry, please try again later",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.brown,
-            textColor: Colors.white,
-            fontSize: 16.0);
-        return;
-      }
-    });
+    if (_image != null) {
+      final file = File(_image.path);
+      String base64Image = base64Encode(file.readAsBytesSync());
+      http.post(
+          Uri.parse(
+              "https://hubbuddies.com/270552/rice2go/php/update_food_details.php"),
+          body: {
+            "menuid": widget.food.id,
+            "name": name,
+            "desc": desc,
+            "category": category,
+            "price": price,
+            "encoded_string": base64Image,
+          }).then((response) {
+        print(response.body);
+        if (response.body == "successsuccesssuccesssuccesssuccess") {
+          Fluttertoast.showToast(
+              msg: "Success.",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.brown,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: "Sorry, please try again later",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.brown,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
+      });
+    } else {
+      http.post(
+          Uri.parse(
+              "https://hubbuddies.com/270552/rice2go/php/update_food_details.php"),
+          body: {
+            "menuid": widget.food.id,
+            "name": name,
+            "desc": desc,
+            "category": category,
+            "price": price,
+          }).then((response) {
+        print(response.body);
+        if (response.body == "successsuccesssuccesssuccess") {
+          Fluttertoast.showToast(
+              msg: "Success.",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.brown,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.brown,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
+      });
+    }
   }
 
   choosePhoto() {
@@ -440,6 +539,8 @@ class _AddMenuState extends State<AddMenu> {
     setState(() {
       _image = pickedFile;
       Navigator.of(context).pop();
+      _takepicture = false;
+      _takepicturelocal = true;
     });
   }
 }
